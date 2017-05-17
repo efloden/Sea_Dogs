@@ -10,9 +10,10 @@ body {
     z-index: 10;
 }
 .enemyShip {
-    background-size: 66px 113px;
-    width: 66px;
-    height: 113px;
+    background: no-repeat center;
+    background-size: 40px 64px;
+    width: 64px;
+    height: 64px;
     position: absolute;
     z-index: 10;
     background-image: url('images/ship (5).png');
@@ -28,12 +29,13 @@ body {
     background-image: url('images/cannonBall.png');
 }
 #player {
-    background-size: 66px 113px;
-    width: 66px;
-    height: 113px;
+    background: no-repeat center;
+    background-size: 40px 64px;
+    width: 64px;
+    height: 64px;
     position: absolute;
     z-index: 15;
-    background-image: url('images/ship (3).png');
+    background-image: url('images/ship (2).png');
     /*transform: rotate(180deg);*/
 }
 #fireCannon {
