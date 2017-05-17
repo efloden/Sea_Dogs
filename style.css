@@ -26,13 +26,55 @@ body {
     z-index: 10;
     background-image: url('images/cannonBall.png');
 }
+.enemyCannonBall {
+    background-size: 10px 10px;
+    width: 10px;
+    height: 10px;
+    position: fixed;
+    z-index: 10;
+    background-image: url('images/cannonBall.png');
+}
+.levelExit {
+
+}
+.moneyDrop {
+
+}
 #player {
     background: no-repeat center;
     background-size: 40px 64px;
     width: 64px;
     height: 64px;
     position: absolute;
-    z-index: 15;
+    z-index: 10;
     background-image: url('images/ship (2).png');
-    /*transform: rotate(180deg);*/
+}
+#navBar {
+    z-index: 20;
+    position: absolute;
+}
+#helpBtn {
+    z-index: 20;
+    position: relative;
+    display: inline-block;
+}
+#resetBtn {
+    z-index: 20;
+    position: relative;
+    display: inline-block;
+}
+#pauseBtn {
+    z-index: 20;
+    position: relative;
+    display: inline-block;
+}
+#playerHealth {
+    z-index: 20;
+    position: relative;
+    display: inline-block;
+}
+#playerScore {
+    z-index: 20;
+    position: relative;
+    display: inline-block;
 }

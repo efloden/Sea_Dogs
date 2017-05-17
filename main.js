@@ -1,9 +1,13 @@
 // Global Variables
 var scale = 64;
+var playerHealth = 10;
+var maxHealth = 10;
 var level = 1;
-
+var score = 0;
+// Timeout Functions
+var timeouts = 0;
 // Game Maps/Levls
-var map1portrait = {
+var portraitMap1 = {
     cols: 9,
     rows: 16,
     tiles: [
@@ -11,6 +15,9 @@ var map1portrait = {
         19, 73, 73, 73, 73, 73, 73, 73, 17,
         19, 73, 73, 73, 73, 73, 73, 73, 17,
         19, 73, 73, 73, 73, 73, 73, 73, 17,
+        52, 7, 9, 73, 73, 73, 6, 7, 53,
+        40, 24, 97, 73, 73, 73, 38, 24, 39,
+        36, 55, 57, 73, 73, 73, 54, 56, 37,
         19, 73, 73, 73, 73, 73, 73, 73, 17,
         19, 73, 73, 73, 73, 73, 73, 73, 17,
         19, 73, 73, 73, 73, 73, 73, 73, 17,
@@ -19,17 +26,14 @@ var map1portrait = {
         19, 73, 73, 73, 73, 73, 73, 73, 17,
         19, 73, 73, 73, 73, 73, 73, 73, 17,
         19, 73, 73, 73, 73, 73, 73, 73, 17,
-        19, 73, 73, 73, 73, 73, 73, 73, 17,
-        19, 73, 73, 73, 73, 73, 73, 73, 17,
-        19, 73, 73, 73, 73, 73, 73, 73, 17,
-        20, 2, 2, 2, 2, 2, 2, 2, 21
+        20, 2, 2, 2, 2, 2, 2, 2, 21,
     ],
     playerStart: { c: 5, r: 15 },
     getTile: function (col, row) {
-        return this.tiles[row * map1portrait.cols + col];
+        return this.tiles[row * portraitMap1.cols + col];
     }
 }
-var map1landscape = {
+var landscapeMap1 = {
     cols: 16,
     rows: 9,
     tiles: [
@@ -44,13 +48,14 @@ var map1landscape = {
         20, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 21
     ],
     getTile: function (col, row) {
-        return this.tiles[row * map1landscape.cols + col];
+        return this.tiles[row * landscapeMap1.cols + col];
     }
 }
 /*
  * Initializes the game on page load, master controller of the application.
  */
 $(document).ready(function() {
+    $("span:last").text(score);
     adjustWorld();
     $(window).resize(function() {
         console.log("resized");
@@ -65,16 +70,16 @@ function adjustWorld(map) {
         console.log("Portrait mode");
         scale = $(window).width() / 9;
         cleanMap();
-        drawMap(map1portrait, scale);
-        drawPlayer(200, 300);
-        drawNavyPatrol(200, 100, 90);
+        drawMap(portraitMap1, scale);
+        drawPlayer(200, 300, scale);
+        drawNavyPatrol(200, 70, 90, scale);
     } else {
         console.log("Landscape mode");
         scale = $(window).width() / 16;
         cleanMap();
-        drawMap(map1landscape, scale);
-        drawPlayer(100, 100);
-        drawNavyPatrol(200, 100, 90);
+        drawMap(landscapeMap1, scale);
+        drawPlayer(100, 100, scale);
+        drawNavyPatrol(200, 100, 90, scale);
     }
 }
 
@@ -119,52 +124,137 @@ function drawMap(map, myScale) {
  * Destroys the current world elements.
  */
 function cleanMap() {
+    // CLear all the timeout functions present
+    for (var i = 0; i < timeouts; i++) {
+        clearTimeout(i);
+    }
+    timeouts = 0;
     $("#world").empty();
 }
 
 /*
  * Draws the player to the game world and defines player interactions.
  */
-function drawPlayer(startX, startY) {
-    $("#world").append("<div id='player' style='left: "+ startX +"px; top: "+ startY +"px; '></div>");
+function drawPlayer(startX, startY, scale) {
+    var height = Math.floor(scale + scale/2);
+    $("#world").append(
+        "<div id='player' style='left: "+ startX +"px; top: "+ startY +"px; \
+        background-size: "+scale+"px " + height + "px;     \
+        width: " + height + "px;    \
+        height: " + height + "px;    \
+        '></div>"
+    );
+    var playerShip = $("#player");
+    jQuery.data(playerShip, "values", {
+        health: playerHealth
+    });
+    $( "span:first" ).text( jQuery.data( playerShip, "values" ).health );
+    playerShip.onCollision(function(otherObject) {
+        if (otherObject.hasClass('enemyCannonBall')) {
+            playerHealth -= 3;
+            console.log('hit! player health now: ' + playerHealth);
+            if (playerHealth <= 7 && playerHealth >= 5) {
+                this.css("background-image", "url('images/ship (8).png')");
+            } else if (playerHealth <= 4 && playerHealth >= 1) {
+                this.css("background-image", "url('images/ship (14).png')");
+            } else if (playerHealth < 1) {
+                playerHealth = 0;
+                this.css("background-image", "url('images/ship (20).png')");
+                playerShip.speed(0);
+            }
+            $("span:first").text(playerHealth);
+        } else {
+            playerShip.speed(0);
+        }
+    });
 }
 
 /*
  * Draws a Navy Patrol boat to the game world and defines its interactions.
  */
-function drawNavyPatrol(startX, startY, heading, id) {
-    $("#world").append("<div value='10' class='enemyNavyShip' id='navy' style='left: "+ startX +"px; top: "+ startY +"px; '></div>");
+function drawNavyPatrol(startX, startY, heading, scale) {
+    var height = Math.floor(scale + scale/2);
+    $("#world").append(
+        "<div value='10' class='enemyNavyShip' id='navy' \
+        style='left: "+ startX +"px; top: "+ startY +"px; \
+        background-size: "+scale+"px " + height + "px;     \
+        width: " + height + "px;    \
+        height: " + height + "px;    \
+        '></div>"
+    );
     var thisShip = $("#navy");
-    console.log(thisShip);
     jQuery.data(thisShip, "values", {
         health: 10
     });
-    console.log(jQuery.data(thisShip, "values").health);
-    $(".enemyNavyShip").moveTo(heading);
-    $(".enemyNavyShip").speed(0.1);
-    $(".enemyNavyShip").autoBounceOff(true);
-    $(".enemyNavyShip").onCollision(function(otherObject) {
+    thisShip.css("transform", "rotate("+heading+270+"deg)");
+    thisShip.moveTo(heading);
+    thisShip.speed(0.2);
+    thisShip.autoBounceOff(true);
+    thisShip.onCollision(function(otherObject) {
         if (otherObject.hasClass('playerCannonBall')) {
-            console.log('we hit a boat');
-            this.css("background-image", "url('images/ship (11).png')");
+            var currentHealth = jQuery.data(thisShip, "values").health;
+            newHealth = currentHealth - 3;
+            jQuery.data(thisShip, "values", {
+                health: newHealth
+            });
+            console.log('hit! health now: ' + jQuery.data(thisShip, "values").health);
+            if (newHealth <= 7 && newHealth >= 5) {
+                this.css("background-image", "url('images/ship (11).png')");
+            } else if (newHealth <= 4 && newHealth >= 1) {
+                this.css("background-image", "url('images/ship (17).png')");
+            } else if (newHealth < 1) {
+                this.css("background-image", "url('images/ship (23).png')");
+                thisShip.speed(0);
+                updateScore(100);
+                timeouts++; // Increment the number of timeouts we need to clean up
+                setTimeout(function () {
+                    thisShip.remove();
+                }, 2000);
+            }
         } else {
             var facing  = getRotationDegrees(this);
-            facing += 90;
+            facing += 180;
             this.css("transform", "rotate("+facing+"deg)");
         }
     });
     // On player tap shoot a cannonball towards this boat.
-    $(".enemyNavyShip").onTap(function(event) {
+    thisShip.onTap(function(event) {
         var pleftPos = $("#player").position().left + (scale/2);
         var ptopPos = $("#player").position().top + (scale/2);
+        var leftPos = thisShip.position().left + (scale/2);
+        var topPos = thisShip.position().top + (scale/2);
+        var direction = calculateAngle(topPos, ptopPos, leftPos, pleftPos);
+        direction+=90;
         $("#world").append("<div class='playerCannonBall' style='left: "+ pleftPos +"px; top: "+ ptopPos +"px;'></div>");
-        var leftPos = $(".enemyNavyShip").position().left + (scale/2);
-        var topPos = $(".enemyNavyShip").position().top + (scale/2);
-        $(".playerCannonBall").moveTo(leftPos, topPos);
+        $(".playerCannonBall").moveTo(direction);
         $(".playerCannonBall").onCollision(function(otherObject) {
             this.remove();
         });
     });
+    // Shoot at the player 10 times with a delay
+    for (var start = 1; start < 10; start++) {
+        shootPlayer(start);
+    }
+    function shootPlayer(start) {
+        timeouts++; // Increment the number of timeouts we need to clean up
+        shootingPlayer = setTimeout(function () {
+            // Only shoot if this ship is still alive
+            if (jQuery.data(thisShip, "values").health > 1) {
+                console.log('navy shoots!');
+                var pleftPos = $("#player").position().left + (scale/2);
+                var ptopPos = $("#player").position().top + (scale/2);
+                var leftPos = thisShip.position().left + (scale/2);
+                var topPos = thisShip.position().top + (scale/2);
+                var direction = calculateAngle(ptopPos, topPos, pleftPos, leftPos);
+                direction+=90;
+                $("#world").append("<div class='enemyCannonBall' id='enemyCannonBall"+start+"' style='left: "+ leftPos +"px; top: "+ topPos +"px;'></div>");
+                $("#enemyCannonBall" + start).moveTo(direction);
+                $("#enemyCannonBall" + start).onCollision(function(otherObject) {
+                    this.remove();
+                });
+            }
+        }, 3000 * start);
+    }
 }
 
 /*
@@ -212,4 +302,33 @@ function getRotationDegrees(obj) {
     } else { var angle = 0; }
     //return (angle < 0) ? angle + 360 : angle;
     return angle;
+}
+
+/*
+ * Updates the Player Score, congratulates milestones
+ */
+function updateScore(value) {
+    score += value;
+    $("span:last").text(score);
+}
+
+/*
+ * Opens Help window
+ */
+function openHelp() {
+    alert('Help Menu \n Tap to move or fire on enemy ships, watch for returning fire!');
+}
+
+/*
+ * Resets the game world
+ */
+function resetGame() {
+    location.reload();
+}
+
+/*
+ * Opens Help window
+ */
+function pauseGame() {
+    alert('Game Paused.\n Continue?');
 }
