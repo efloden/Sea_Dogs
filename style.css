@@ -18,6 +18,24 @@ body {
     z-index: 10;
     background-image: url('images/ship (5).png');
 }
+.enemyFireShip {
+    background: no-repeat center;
+    background-size: 20px 38px;
+    width: 20px;
+    height: 38px;
+    position: absolute;
+    z-index: 10;
+    background-image: url('images/ship (3).png');
+}
+.enemyChaserShip {
+    background: no-repeat center;
+    background-size: 40px 64px;
+    width: 64px;
+    height: 64px;
+    position: absolute;
+    z-index: 10;
+    background-image: url('sources/chaser_ship.png');
+}
 .playerCannonBall {
     background-size: 10px 10px;
     width: 10px;
@@ -35,10 +53,28 @@ body {
     background-image: url('images/cannonBall.png');
 }
 .levelExit {
-
+    background-size: 64px 64px;
+    width: 64px;
+    height: 64px;
+    position: absolute;
+    z-index: 10;
+    background-image: url('images/tile_71.png');
 }
 .moneyDrop {
-
+    background-size: 32px 32px;
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    z-index: 10;
+    background-image: url('images/tile_72.png');
+}
+.targetSquare {
+    background-size: 32px 32px;
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    z-index: 10;
+    background-image: url('sources/target.png');
 }
 #player {
     background: no-repeat center;
@@ -57,24 +93,76 @@ body {
     z-index: 20;
     position: relative;
     display: inline-block;
+    color: white;
+    background-color: black;
+    border-radius: 20px;
+    font-size: 14px;
+    font-family: sans-serif;
+    text-align: center;
+    cursor: pointer;
 }
 #resetBtn {
     z-index: 20;
     position: relative;
     display: inline-block;
+    color: white;
+    background-color: black;
+    border-radius: 20px;
+    font-size: 14px;
+    font-family: sans-serif;
+    text-align: center;
+    cursor: pointer;
 }
 #pauseBtn {
     z-index: 20;
     position: relative;
     display: inline-block;
+    color: white;
+    background-color: black;
+    border-radius: 20px;
+    font-size: 14px;
+    font-family: sans-serif;
+    text-align: center;
+    cursor: pointer;
 }
 #playerHealth {
     z-index: 20;
     position: relative;
     display: inline-block;
+    color: red;
+    font-size: 14px;
+    font-family: sans-serif;
 }
 #playerScore {
     z-index: 20;
     position: relative;
     display: inline-block;
+    color: blue;
+    font-size: 14px;
+    font-family: sans-serif;
+}
+
+.cannonExplosion {
+    background: no-repeat center;
+    background-size: 16px 16px;
+    width: 16px;
+    height: 16px;
+    animation-name: cannonHit;
+    animation-duration: 0.5s;
+    animation-iteration-count: 1;
+    animation-timing-function: linear;
+    position: absolute;
+    z-index: 15;
+}
+
+@keyframes cannonHit {
+    0% {
+        background-image: url('images/explosion1.png');
+    }
+    50% {
+        background-image: url('images/explosion2.png');
+    }
+    100% {
+        background-image: url('images/explosion3.png');
+    }
 }
