@@ -392,7 +392,12 @@ function drawNavyPatrol(startX, startY, heading, scale) {
                 var topPos = thisShip.position().top + (scale/2);
                 var direction = calculateAngle(ptopPos, topPos, pleftPos, leftPos);
                 direction+=90;
-                $("#world").append("<div class='enemyCannonBall' id='enemyCannonBall"+start+"' style='left: "+ leftPos +"px; top: "+ topPos +"px;'></div>");
+                var bulletSize = scale/5;
+                $("#world").append("<div class='enemyCannonBall' id='enemyCannonBall"+start+"' style='left: "+ leftPos +"px; top: "+ topPos +"px; \
+                background-size: "+bulletSize+"px " + bulletSize + "px;   \
+                width: " + bulletSize + "px;    \
+                height: " + bulletSize + "px;    \
+                '></div>");
                 $("#enemyCannonBall" + start).moveTo(direction);
                 $("#enemyCannonBall" + start).onCollision(function(otherObject) {
                     $("#enemyCannonBall" + start).remove();
@@ -566,8 +571,12 @@ function drawTarget(leftPos, topPos, myScale) {
     $(".targetSquare").onCollision(function(otherObject) {
         var fireFromLeft = leftPos - scale*2;
         var fireFromTop = topPos + scale/2;
+        bulletSize = scale/5;
         if (otherObject.is('#player')) {
-            $("#world").append("<div class='enemyCannonBall' id='enemyCannonBall"+99+"' style='left: "+ fireFromLeft +"px; top: "+ fireFromTop +"px;'></div>");
+            $("#world").append("<div class='enemyCannonBall' id='enemyCannonBall"+99+"' style='left: "+ fireFromLeft +"px; top: "+ fireFromTop +"px;  \
+            background-size: "+bulletSize+"px " + bulletSize + "px;   \
+            width: " + bulletSize + "px;    \
+            height: " + bulletSize + "px;    \'></div>");
             $("#enemyCannonBall" + 99).moveTo(90);
             $("#enemyCannonBall" + 99).onCollision(function(otherObject) {
                 $("#enemyCannonBall" + 99).remove();
@@ -582,7 +591,12 @@ function drawTarget(leftPos, topPos, myScale) {
  * Draws a collectable moneyDrop to the game world
  */
 function drawMoneyDrop(leftPos, topPos, myScale) {
-    $("#world").append("<div class='moneyDrop' style='left: "+ leftPos +"px; top: "+ topPos +"px;'></div>");
+    var moneySize = scale/2;
+    $("#world").append("<div class='moneyDrop' style='left: "+ leftPos +"px; top: "+ topPos +"px; \
+    background-size: "+moneySize+"px " + moneySize + "px;   \
+    width: " + moneySize + "px;    \
+    height: " + moneySize + "px;    \
+    '></div>");
     $(".moneyDrop").onCollision(function(otherObject) {
         if (otherObject.is('#player')) {
             score += 100;
@@ -596,7 +610,12 @@ function drawMoneyDrop(leftPos, topPos, myScale) {
  * Draws an exploision animation to the game world
  */
 function explosionAnimation(leftPos, topPos, myScale) {
-    $("#world").append("<div class='cannonExplosion' style='left: "+ leftPos +"px; top: "+ topPos +"px;'></div>");
+    var explosionSize = scale/1.75;
+    $("#world").append("<div class='cannonExplosion' style='left: "+ leftPos +"px; top: "+ topPos +"px; \
+    background-size: "+explosionSize+"px " + explosionSize + "px;   \
+    width: " + explosionSize + "px;    \
+    height: " + explosionSize + "px;    \
+    '></div>");
     $(".cannonExplosion").animate({
         opacity: 0.50,
         height: myScale,
@@ -618,7 +637,12 @@ function makePlayerShootable(object) {
         var topPos = object.position().top + (scale/2);
         var direction = calculateAngle(topPos, ptopPos, leftPos, pleftPos);
         direction+=90;
-        $("#world").append("<div class='playerCannonBall' style='left: "+ pleftPos +"px; top: "+ ptopPos +"px;'></div>");
+        var bulletSize = scale/5;
+        $("#world").append("<div class='playerCannonBall' style='left: "+ pleftPos +"px; top: "+ ptopPos +"px; \
+        background-size: "+bulletSize+"px " + bulletSize + "px;     \
+        width: " + bulletSize + "px;    \
+        height: " + bulletSize + "px;    \
+        '></div>");
         $(".playerCannonBall").moveTo(direction);
         $(".playerCannonBall").onCollision(function(otherObject) {
             this.remove();
